@@ -11,7 +11,46 @@
   
 #define PORT     8080 
 #define MAXLINE 1024 
-  
+ 
+char array[9];
+char* validateInput(char *hello, size_t inputLen)
+{
+        while(1){
+                printf("HEY :Enter a number -- ");
+                getline(&hello, &inputLen, stdin);
+                if(strlen(hello)==2 && hello[0]>=49 && hello[0]<=57)
+                        return hello;
+        }
+
+}
+
+void initArray() {
+        for (int i=0;i< 9;i++)
+                array[i] = '-';
+}
+
+void displayBoard()
+{
+        printf("Client (X) and Server (O)\n");
+        for (int i =0; i<9;i++){
+                if((i)%3 ==0) printf("\n");
+                printf("\t %c", array[i]);
+        }
+	printf("\n");
+
+}
+
+// update Array with the provided numbers
+void manipulateBoard(char *c, char source)
+{
+        int i;
+        sscanf(c, "%d", &i); // Using sscanf
+        array[i-1] = source;
+
+        displayBoard();
+}
+
+
 // Driver code 
 int main() { 
     int sockfd; 
@@ -24,7 +63,13 @@ int main() {
     if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
         perror("socket creation failed"); 
         exit(EXIT_FAILURE); 
-    } 
+    }
+   printf("Server started \n" );
+
+    printf("Intializing the board\n");
+    initArray();
+    displayBoard();
+ 
       
     memset(&servaddr, 0, sizeof(servaddr)); 
     memset(&cliaddr, 0, sizeof(cliaddr)); 
@@ -47,21 +92,24 @@ int main() {
     size_t inputLen=0;
     len = sizeof(cliaddr);  //len is value/resuslt 
 
-    while(sizeof(buffer) !=1)
+    while(sizeof(buffer) !=1 && buffer[0]!=0)
     {
   
     n = recvfrom(sockfd, (char *)buffer, MAXLINE,  
                 MSG_WAITALL, ( struct sockaddr *) &cliaddr, 
                 &len); 
     buffer[n] = '\0'; 
-    printf("Client : %s\n", buffer); 
-    printf("HEY : print next string - ");
+    printf("Client : %s\n", buffer);
+    manipulateBoard(buffer,'X'); 
+//    printf("HEY : print next string - ");
     //scanf ("%s", hello);
-    getline(&hello, &inputLen, stdin);
+ //   getline(&hello, &inputLen, stdin);
+    hello = validateInput(hello, inputLen);
     sendto(sockfd, (const char *)hello, strlen(hello),  
         MSG_CONFIRM, (const struct sockaddr *) &cliaddr, 
-            len); 
-    printf("Hello message sent.\n");  
+            len);
+    manipulateBoard(hello, 'O'); 
+    printf("message sent.\n");  
     } // end while
       
     return 0; 
