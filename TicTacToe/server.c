@@ -9,7 +9,7 @@
 #define MAX 80
 #define PORT 8080
 #define SA struct sockaddr
-#define DEBUG 1
+#define DEBUG 0
 
 
 struct threadData {
