@@ -49,7 +49,6 @@ void func(int sockfd)
 			printf("Client Exit.. \n");
 			break;
 		}
-		printf("Enter the string: ");
 		bzero(buff, sizeof(buff));
 		//n=0;
 		//while((buff[n++] = getchar()) != '\n');
