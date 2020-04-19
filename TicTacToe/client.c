@@ -8,20 +8,20 @@
 #define SA struct sockaddr
 
 
-
-void validateInput(char *hello)//, size_t inputLen)
+//Entered data should be a number.. or exit.
+void takeValidInput(char *hello)//, size_t inputLen)
 {
         while(1){
                 // Get Input
-                printf("HEY :Enter a number -- ");
+                printf("HEY :Enter a number -- or \'exit\' ");
 		int n=0;
 		while((hello[n++] = getchar()) != '\n');
                 //getline(&hello, &inputLen, stdin);
 //              printf("strelen %u\n", strlen(hello));
-                printf("hello[0] %c\n", hello[0]);
+                //printf("hello[0] %c\n", hello[0]);
 
                 // check if the number is from 1 to 9
-                if(strlen(hello)==2 && hello[0]>=49 && hello[0]<=57)
+                if((strlen(hello)==2 && hello[0]>=49 && hello[0]<=57) || strncmp("exit", hello, 4) == 0)
 			break;
                 // check if the position is already used. 
                         //if (array[hello[0] == '-')
@@ -29,8 +29,6 @@ void validateInput(char *hello)//, size_t inputLen)
         }
 
 }
-
-
 
 void func(int sockfd)
 {
@@ -41,27 +39,39 @@ void func(int sockfd)
 	{
 		bzero(buff, sizeof(buff));
 		read(sockfd, buff, sizeof(buff));
-	
 		printf("From Server : %s", buff);
+		
+		if(strncmp(buff, "You Won", 7) ==0)
+			break;
+		else if(strncmp(buff, "other player WON", 16) ==0)
+			break;
+		else if(strncmp(buff, "Tie Game", 8) ==0)
+			break;
+		else if (strncmp(buff, "Awaiting other player ...", 25) ==0)
+			continue;
+	
 
 		if((strncmp(buff, "exit", 4)) == 0) 
 		{
 			printf("Client Exit.. \n");
-			break;
+			exit(0);
 		}
 		bzero(buff, sizeof(buff));
 		//n=0;
 		//while((buff[n++] = getchar()) != '\n');
-		validateInput(buff);
+		takeValidInput(buff);
 		write(sockfd, buff, sizeof(buff));
+		if(strncmp(buff, "exit", 4) == 0) return;
+		bzero(buff, sizeof(buff));
 		//read(sockfd, buff, sizeof(buff));
 		//printf("From Server : %s", buff);
+		//if(strncmp(buff, "You Won", 7) ==0)
+		//	break;
+		//else if(strncmp(buff, "other player WON", 16) ==0)
+		//	break;
+		//else 
+		//	continue;
 
-		//if((strncmp(buff, "exit", 4)) == 0) 
-	//	{
-	//		printf("Client Exit.. \n");
-	//		break;
-	//	}
 	}
 }
 
